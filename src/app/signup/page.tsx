@@ -38,13 +38,14 @@ export default function SignupPage(){
     const [btnDisabled, setBtnDisabled] = useState(true);
     const [loading,setLoading] = useState(false);
 
-    const onSignup = async(e) => {
+    const onSignup = async(e:any) => {
         e.preventDefault();
         try {
             setLoading(true);
+            console.log(sign);
             const response = await axios.post("/api/users/signup", sign);
             console.log(response.data);
-            // router.push("/");
+            router.push("/dashboard");
             
         } catch (error) {
     
@@ -52,13 +53,14 @@ export default function SignupPage(){
             setLoading(false);
         }
     }
-    const onLogin = async (e) => {
+    const onLogin = async (e:any) => {
         e.preventDefault();
         try {
             setLoading(true);
+            console.log(login);
             const response = await axios.post("/api/users/login", login);
             console.log("Login success "+response.data);
-            // router.push("/");
+            router.push("/dashboard");
         } catch (error : any) {
             console.log("Login failed "+error.message)
         } finally{
@@ -79,7 +81,7 @@ export default function SignupPage(){
         <div className="relative h-screen w-screen max-w-screen max-h-screen flex justify-center items-center bg-gradient-to-tl from-[#2f55dd] to-[#1b7c77] to-70%">
        <Image src={cnt} alt="world" height={700} width={700} className="absolute"/>   
 
-       <Tabs defaultValue="account" className="w-[400px] text-white z-10">
+       <Tabs defaultValue="signup" className="w-[400px] text-white z-10">
       <TabsList className="grid w-full grid-cols-2 bg-white/10 backdrop-blur-xl">
         <TabsTrigger value="signup">Sign Up</TabsTrigger>
         <TabsTrigger value="login">Log In</TabsTrigger>
@@ -103,11 +105,11 @@ export default function SignupPage(){
             </div>
             <div className="space-y-1">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" placeholder="Enter password" type="password" defaultValue="@peduarte" value={sign.password} onChange={(e) => setSign({...sign, password:e.target.value})}/>
+              <Input id="password" placeholder="Enter password" type="password" value={sign.password} onChange={(e) => setSign({...sign, password:e.target.value})}/>
             </div>
           </CardContent>
           <CardFooter>
-            <Button type="submit" onChange={onSignup}>Sign Up</Button>
+            <Button type="submit" onClick={onSignup}>Sign Up</Button>
           </CardFooter>
         </Card>
       </TabsContent>

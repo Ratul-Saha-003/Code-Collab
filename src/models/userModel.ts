@@ -23,12 +23,20 @@ const userSchema : any = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    orgs:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref:"Org"
+    }],
+    projects: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref:"Project"
+    }],
     forgotPasswordToken:String,
     forgotPasswordTokenExpiry: String,
     verifyToken: String,
     verifyTokenExpiry: Date,
 })
 
-const User = mongoose.models.users || mongoose.model("User", userSchema);
+const User = mongoose.models.User || mongoose.model("User", userSchema);
 
 export default User;

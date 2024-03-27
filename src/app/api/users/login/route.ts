@@ -10,7 +10,7 @@ export async function POST(request:NextRequest){
     try {
         // console.log("hi from backend");
         const body:any = await request.json();
-        console.log(body);
+        // console.log(body);
         const {email, password}= body;
         console.log(email);
 

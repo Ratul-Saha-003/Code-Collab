@@ -6,6 +6,10 @@ const orgSchema:any = new mongoose.Schema({
         unique: true,
         required:[true,"Please provide a name"],
     },
+    description:{
+        type:String,
+        required:[true,"Please provide a description"],
+    },
     owner:{
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
@@ -21,5 +25,5 @@ const orgSchema:any = new mongoose.Schema({
     }],
 },{timestamps: true});
 
-const Org = mongoose.model("Org", orgSchema);
+const Org = mongoose.models.Org || mongoose.model("Org", orgSchema);
 export default Org;
