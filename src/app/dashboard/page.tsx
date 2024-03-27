@@ -1,5 +1,7 @@
 "use client"
 import React,{useState, useEffect} from "react";
+import Link from "next/link";
+import {useRouter} from "next/navigation";
 import {
     Avatar,
     AvatarFallback,
@@ -30,6 +32,7 @@ import { Label } from "@/components/ui/label"
 import axios from "axios";
 
 export default function Dashboard(){
+  const router = useRouter();
   const [org, setOrg] = useState({
     name:"",
     description:""
@@ -37,6 +40,15 @@ export default function Dashboard(){
   const [user, setUser] = useState({});
   const [orgs, setOrgs] = useState([]);
   const [loading, setLoading]= useState(false);
+
+  const Logout = async () => {
+    try{
+      const res = await axios.get("/api/users/logout");
+      router.push("/");
+    } catch(err:any){
+      console.log(err.message);
+    }
+  }
 
   const onSubmit = async () => {
     try {
@@ -69,7 +81,7 @@ export default function Dashboard(){
         <div className="w-full bg-[#070b0a] text-[#d1ffef] min-h-screen flex-col">
             <div className="w-full flex justify-between items-center p-10 shadow-sm">
             <div className="text-4xl"> Welcome back, <span className="text-5xl font-semibold bg-gradient-to-r from-[#33e8c3] to-[#430ffb] text-transparent bg-clip-text">{user.username}</span>!</div>
-            <Avatar>
+            <Avatar onClick={Logout}>
                 <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
                 <AvatarFallback>CN</AvatarFallback>
             </Avatar>
@@ -78,9 +90,11 @@ export default function Dashboard(){
             {orgs && orgs.map((el:any, key) => {
               return (
                 <div key={key} className="w-full bg-[#33e8c3] hover:bg-gradient-to-tl from-[#33e8c3] to-[#430ffb] text-[#0e1513] rounded-xl px-6 py-4 my-5 ">
+                  <Link href={`/dashboard/${el.name}`}>
                   <h2 className="text-2xl font-extrabold">{el.name}</h2>
                   <h3 className="text-lg font-semibold">{el.description}</h3>
-                </div>
+                  </Link>
+                </div>  
               )
             })}
             </div>
