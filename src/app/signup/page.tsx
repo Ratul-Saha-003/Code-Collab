@@ -1,8 +1,11 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import world from "@/assets/connect_world.svg";
+import cnt from "@/assets/connect.svg";
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -23,20 +26,25 @@ import {
 
 export default function SignupPage(){
     const router = useRouter();
-    const[user, setUser] = useState({
+    const[sign, setSign] = useState({
         email:"",
         password:"",
-        username:""
+        username:"",
+    })
+    const[login, setLogin] = useState({
+        email:"",
+        password:""
     })
     const [btnDisabled, setBtnDisabled] = useState(true);
     const [loading,setLoading] = useState(false);
 
-    const onSignup = async() => {
+    const onSignup = async(e) => {
+        e.preventDefault();
         try {
             setLoading(true);
-            const response = await axios.post("/api/users/signup", user);
+            const response = await axios.post("/api/users/signup", sign);
             console.log(response.data);
-            router.push("/login");
+            // router.push("/");
             
         } catch (error) {
     
@@ -44,19 +52,92 @@ export default function SignupPage(){
             setLoading(false);
         }
     }
+    const onLogin = async (e) => {
+        e.preventDefault();
+        try {
+            setLoading(true);
+            const response = await axios.post("/api/users/login", login);
+            console.log("Login success "+response.data);
+            // router.push("/");
+        } catch (error : any) {
+            console.log("Login failed "+error.message)
+        } finally{
+            setLoading(false);
+        }
+    }
 
     useEffect(() => {
-        if(user.email.length>0 && user.password.length>0 && user.username.length>0){
+        if((sign.email.length>0 && sign.password.length>0 && sign.username.length>0) || (login.email.length>0 && login.password.length>0)){
             setBtnDisabled(false);
         }else{
             setBtnDisabled(true);
         }
-    },[user])
+    },[sign, login])
 
     return (
         <>
-       
-        <div className="flex-col">
+        <div className="relative h-screen w-screen max-w-screen max-h-screen flex justify-center items-center bg-gradient-to-tl from-[#2f55dd] to-[#1b7c77] to-70%">
+       <Image src={cnt} alt="world" height={700} width={700} className="absolute"/>   
+
+       <Tabs defaultValue="account" className="w-[400px] text-white z-10">
+      <TabsList className="grid w-full grid-cols-2 bg-white/10 backdrop-blur-xl">
+        <TabsTrigger value="signup">Sign Up</TabsTrigger>
+        <TabsTrigger value="login">Log In</TabsTrigger>
+      </TabsList>
+      <TabsContent value="signup">
+        <Card>
+          <CardHeader >
+            <CardTitle>Sign Up</CardTitle>
+            <CardDescription>
+              Fill all the fields to start your journey!
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2">  
+            <div className="space-y-1">
+              <Label htmlFor="username">Username</Label>
+              <Input id="username" placeholder="Enter username" value={sign.username} onChange={(e) => setSign({...sign, username:e.target.value})}/>
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" placeholder="Enter email" value={sign.email} onChange={(e) => setSign({...sign, email:e.target.value})}/>
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="password">Password</Label>
+              <Input id="password" placeholder="Enter password" type="password" defaultValue="@peduarte" value={sign.password} onChange={(e) => setSign({...sign, password:e.target.value})}/>
+            </div>
+          </CardContent>
+          <CardFooter>
+            <Button type="submit" onChange={onSignup}>Sign Up</Button>
+          </CardFooter>
+        </Card>
+      </TabsContent>
+      <TabsContent value="login">
+        <Card>
+          <CardHeader>
+            <CardTitle>Log In</CardTitle>
+            <CardDescription>
+              Welcome Back! Continue your journey!
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <div className="space-y-1">
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" placeholder="Enter email" type="text" value={login.email} onChange={(e) => setLogin({...login, email:e.target.value})}/>
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="password">Password</Label>
+              <Input id="password" placeholder="Enter password" type="password" value={login.password} onChange={(e) => setLogin({...login, password:e.target.value})}/>
+            </div>
+          </CardContent>
+          <CardFooter>
+            <Button type="submit" onClick={onLogin}>Log In</Button>
+          </CardFooter>
+        </Card>
+      </TabsContent>
+    </Tabs>
+        </div>
+        
+        {/* <div className="flex-col">
             <h1>{loading ? "Processing" : "Signup"}</h1>
             <hr />
             <label htmlFor="username">Username</label>
@@ -67,59 +148,8 @@ export default function SignupPage(){
             <input type="password" id="password" value={user.password} onChange={(e) => setUser({...user, password: e.target.value})} placeholder="Enter password"/>
             <button type="submit" onClick={onSignup}>{btnDisabled ? "No Signup" : "Signup"}</button>
             <Link href="/login">Already have an account?</Link>
-        </div>
-        <Tabs defaultValue="account" className="w-[400px]">
-      <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="account">Account</TabsTrigger>
-        <TabsTrigger value="password">Password</TabsTrigger>
-      </TabsList>
-      <TabsContent value="account">
-        <Card>
-          <CardHeader>
-            <CardTitle>Account</CardTitle>
-            <CardDescription>
-              Make changes to your account here. Click save when you're done.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <div className="space-y-1">
-              <Label htmlFor="name">Name</Label>
-              <Input id="name" defaultValue="Pedro Duarte" />
-            </div>
-            <div className="space-y-1">
-              <Label htmlFor="username">Username</Label>
-              <Input id="username" defaultValue="@peduarte" />
-            </div>
-          </CardContent>
-          <CardFooter>
-            <Button>Save changes</Button>
-          </CardFooter>
-        </Card>
-      </TabsContent>
-      <TabsContent value="password">
-        <Card>
-          <CardHeader>
-            <CardTitle>Password</CardTitle>
-            <CardDescription>
-              Change your password here. After saving, you'll be logged out.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <div className="space-y-1">
-              <Label htmlFor="current">Current password</Label>
-              <Input id="current" type="password" />
-            </div>
-            <div className="space-y-1">
-              <Label htmlFor="new">New password</Label>
-              <Input id="new" type="password" />
-            </div>
-          </CardContent>
-          <CardFooter>
-            <Button>Save password</Button>
-          </CardFooter>
-        </Card>
-      </TabsContent>
-    </Tabs>
+        </div> */}
+        
         </>
     )
 }
